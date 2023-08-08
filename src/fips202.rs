@@ -486,7 +486,7 @@ pub fn shake256(output: &mut [u8], mut outlen: usize, input: &[u8], inlen: usize
 pub fn shake128_stream_init(state: &mut KeccakState, seed: &[u8], nonce: u16) {
     let t = [nonce as u8, (nonce >> 8) as u8];
     state.init();
-    shake128_absorb(state, seed, crate::params::SEEDBYTES);
+    shake128_absorb(state, seed, crate::params::SEED_BYTES);
     shake128_absorb(state, &t, 2);
     shake128_finalize(state);
 }

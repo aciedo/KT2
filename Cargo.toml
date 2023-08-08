@@ -1,16 +1,13 @@
 [package]
-name = "crystals-dilithium"
+name = "d3"
 version = "1.0.0"
 edition = "2021"
 license = "GPL-3.0"
-description = "Pure RUST implementation of CRYSTALS-Dilithium digital signature scheme"
+description = "Pure RUST implementation of CRYSTALS-Dilithium3 digital signature scheme"
 readme = "README.md"
-homepage = "https://www.quantumblockchains.io/"
-repository = "https://github.com/Quantum-Blockchains/dilithium"
+repository = "https://github.com/valeralabs/d3"
 keywords = ["cryptography", "quantum", "dilithium", "digital-signatures", "security"]
 categories = ["cryptography", "post-quantum-cryptography"]
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 rand = "0.7.3"
@@ -19,5 +16,5 @@ rand = "0.7.3"
 criterion = { version = "0.4", features = ["html_reports"] }
 
 [[bench]]
-name = "dilithium_benchmarks"
+name = "d3_benchmarks"
 harness = false

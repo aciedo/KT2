@@ -1,14 +1,12 @@
-// -*- mode: rust; -*-
-
 use criterion::{Criterion, criterion_group};
 
-mod dilithium_benches {
-    use dilithium::dilithium2::Keypair;
+mod d3_benches {
+    use d3::Keypair;
 
     use super::*;
 
     fn key_generation(c: &mut Criterion) {
-        c.bench_function("Dilithium keypair generation", move |b| {
+        c.bench_function("d3 keypair gen", move |b| {
             b.iter(|| Keypair::generate(None));
         });
     }
@@ -17,7 +15,7 @@ mod dilithium_benches {
         let keypair = Keypair::generate(None);
         let msg = b"";
 
-        c.bench_function("Dilithium signing", move |b| b.iter(|| keypair.sign(msg)));
+        c.bench_function("d3 sign", move |b| b.iter(|| keypair.sign(msg)));
     }
 
     fn verify(c: &mut Criterion) {
@@ -25,13 +23,13 @@ mod dilithium_benches {
         let msg = b"";
         let sig = keypair.sign(msg);
 
-        c.bench_function("Dilithium signature verification", move |b| {
+        c.bench_function("d3 verify", move |b| {
             b.iter(|| keypair.verify(msg, sig.as_slice()))
         });
     }
 
     criterion_group! {
-        name = dilithium_benches;
+        name = d3_benches;
         config = Criterion::default();
         targets =
             sign,
@@ -40,4 +38,4 @@ mod dilithium_benches {
     }
 }
 
-criterion::criterion_main!(dilithium_benches::dilithium_benches);
+criterion::criterion_main!(d3_benches::d3_benches);
