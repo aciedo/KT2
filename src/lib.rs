@@ -30,13 +30,13 @@ impl Keypair {
     /// 
     /// # Arguments
     /// 
-    /// * 'entropy' - optional bytes for determining the generation process
+    /// * 'seed' - optional bytes for determining the generation process
     /// 
     /// Returns an instance of Keypair
-    pub fn generate(entropy: Option<&[u8]>) -> Keypair {
+    pub fn generate(seed: Option<&[u8]>) -> Keypair {
         let mut pk = [0u8; PUBLIC_KEY_BYTES];
         let mut sk = [0u8; SECRET_KEY_BYTES];
-        crate::sign::keypair(&mut pk, &mut sk, entropy);
+        crate::sign::keypair(&mut pk, &mut sk, seed);
         Keypair {
             secret: SecretKey::from_bytes(&sk),
             public: PublicKey::from_bytes(&pk)

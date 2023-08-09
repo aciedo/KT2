@@ -1,7 +1,7 @@
 use criterion::{Criterion, criterion_group};
 
 mod d3_benches {
-    use d3::Keypair;
+    use d3::{Keypair, PublicKey};
 
     use super::*;
 
@@ -27,6 +27,14 @@ mod d3_benches {
             b.iter(|| keypair.verify(msg, sig.as_slice()))
         });
     }
+    
+    fn derive_pk(c: &mut Criterion) {
+        let keypair = Keypair::generate(None);
+
+        c.bench_function("d3 derive pk", move |b| {
+            b.iter(|| PublicKey::from_sk(&keypair.secret))
+        });
+    }
 
     criterion_group! {
         name = d3_benches;
@@ -35,6 +43,7 @@ mod d3_benches {
             sign,
             verify,
             key_generation,
+            derive_pk
     }
 }
 
