@@ -1,7 +1,8 @@
 use criterion::{Criterion, criterion_group};
 
-mod d3_benches {
-    use d3::{Keypair, PublicKey};
+mod kt2_benches {
+    use criterion::Throughput;
+    use kt2::{Keypair, PublicKey};
 
     use super::*;
 
@@ -24,7 +25,7 @@ mod d3_benches {
         let sig = keypair.sign(msg);
 
         c.bench_function("d3 verify", move |b| {
-            b.iter(|| keypair.verify(msg, sig.as_slice()))
+            b.iter(|| keypair.verify(msg, &sig))
         });
     }
     
@@ -35,6 +36,17 @@ mod d3_benches {
             b.iter(|| PublicKey::from_sk(&keypair.secret))
         });
     }
+    
+    fn aes(c: &mut Criterion) {
+        let mut bytes = vec![0u8; 1024 * 1024 * 64]; // 64 MB
+        let keypair = Keypair::generate(None);
+        
+        let mut group = c.benchmark_group("aes");
+        group.throughput(Throughput::Bytes(bytes.len() as u64));
+        group.bench_function("encrypt", |b| b.iter(|| keypair.secret.encrypt(&mut bytes)));
+        group.bench_function("decrypt", |b| b.iter(|| keypair.secret.decrypt(&mut bytes)));
+        group.finish();
+    }
 
     criterion_group! {
         name = d3_benches;
@@ -43,8 +55,9 @@ mod d3_benches {
             sign,
             verify,
             key_generation,
-            derive_pk
+            derive_pk,
+            aes
     }
 }
 
-criterion::criterion_main!(d3_benches::d3_benches);
+criterion::criterion_main!(kt2_benches::d3_benches);

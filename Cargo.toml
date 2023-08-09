@@ -1,20 +1,24 @@
 [package]
-name = "d3"
+name = "kt2"
 version = "1.0.0"
 edition = "2021"
 license = "GPL-3.0"
-description = "Pure RUST implementation of CRYSTALS-Dilithium3 digital signature scheme"
+description = "KeyTree2 (KT2) is a 2nd generation, quantum-resistant cryptographic library used for Atlas' Data Access Layer"
 readme = "README.md"
-repository = "https://github.com/valeralabs/d3"
+repository = "https://github.com/valeralabs/kt2"
 keywords = ["cryptography", "quantum", "dilithium", "digital-signatures", "security"]
 categories = ["cryptography", "post-quantum-cryptography"]
 
 [dependencies]
+blake3 = "1.4.1"
+bs58 = "0.5.0"
+hardlight = "2.0.0-beta0"
 rand = "0.7.3"
+ring = "0.16.20"
 
 [dev-dependencies]
 criterion = { version = "0.4", features = ["html_reports"] }
 
 [[bench]]
-name = "d3_benchmarks"
+name = "kt2_benchmarks"
 harness = false

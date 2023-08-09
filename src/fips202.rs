@@ -1,7 +1,7 @@
 pub const SHAKE128_RATE: usize = 168;
 pub const SHAKE256_RATE: usize = 136;
 
-const NROUNDS: usize = 24;
+const NROUNDS: usize = 12;
 
 /// 1600-bit state of the algorithm, with an index of curent position.
 #[derive(Copy, Clone)]
@@ -69,18 +69,6 @@ const KECCAKF_ROUNDCONSTANTS: [u64; NROUNDS] = [
     0x0000000000000088u64,
     0x0000000080008009u64,
     0x000000008000000au64,
-    0x000000008000808bu64,
-    0x800000000000008bu64,
-    0x8000000000008089u64,
-    0x8000000000008003u64,
-    0x8000000000008002u64,
-    0x8000000000000080u64,
-    0x000000000000800au64,
-    0x800000008000000au64,
-    0x8000000080008081u64,
-    0x8000000000008080u64,
-    0x0000000080000001u64,
-    0x8000000080008008u64,
 ];
 
 /// The Keccak F1600 Permutation
