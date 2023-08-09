@@ -17,6 +17,9 @@ pub mod kt2;
 pub mod aes;
 pub mod id;
 
+pub use kt2::*;
+pub use id::*;
+
 pub const SECRET_KEY_BYTES: usize = crate::params::SECRETKEYBYTES;
 pub const PUBLIC_KEY_BYTES: usize = crate::params::PUBLICKEYBYTES;
 pub const SIGN_BYTES: usize = crate::params::SIGNBYTES;
