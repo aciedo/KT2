@@ -12,7 +12,7 @@ categories = ["cryptography", "post-quantum-cryptography"]
 [dependencies]
 blake3 = "1.4.1"
 bs58 = "0.5.0"
-hardlight = "2.0.0-beta0"
+hardlight = { version = "2.0.0", git = "https://github.com/valeralabs/hardlight"}
 rand = "0.7.3"
 ring = "0.16.20"
 
