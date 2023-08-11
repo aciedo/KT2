@@ -3,9 +3,9 @@
 KeyTree2 (KT2) is a 2nd generation, quantum-resistant cryptographic library used for Atlas' Data Access Layer. It is effectively a wrapper around multiple cryptographic primitives:
 
 - Symmetric encryption: AES-256-GCM from [ring](https://docs.rs/ring/0.16.20/ring/)
-- Signatures: modified Dilithium3 from CRYSTALS (we've reduced SHAKE256's rounds down to 12)
+- Signatures: modified Dilithium3 from CRYSTALS (we've reduced SHAKE256's rounds down to 12), taken from [crystals-dilithium](https://docs.rs/crystals-dilithium)
 - Hashes: BLAKE3 from [blake3](https://docs.rs/blake3/latest/blake3/)
-- Key encapsulation: Kyber768 from CRYSTALS (not implemented quite yet)
+- Key encapsulation: Kyber768 from CRYSTALS from [safe_pqc_kyber](https://docs.rs/safe_pqc_kyber)
 
 ---
 > **Use at Your Own Risk**  

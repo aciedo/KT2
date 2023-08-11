@@ -15,6 +15,7 @@ bs58 = "0.5.0"
 hardlight = { version = "2.0.0", git = "https://github.com/valeralabs/hardlight"}
 rand = "0.7.3"
 ring = "0.16.20"
+safe_pqc_kyber = { version = "0.6.1", features = ["kyber768", "std", "rand", "zeroize"] }
 
 [dev-dependencies]
 criterion = { version = "0.4", features = ["html_reports"] }

@@ -19,6 +19,7 @@ pub mod id;
 
 pub use kt2::*;
 pub use id::*;
+pub use safe_pqc_kyber as kyber;
 
 pub const SECRET_KEY_BYTES: usize = crate::params::SECRETKEYBYTES;
 pub const PUBLIC_KEY_BYTES: usize = crate::params::PUBLICKEYBYTES;
