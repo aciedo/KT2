@@ -1,12 +1,14 @@
 use std::fmt::Debug;
-use hardlight::codable;
+
+use rkyv::{Deserialize, Serialize, Archive};
 
 use crate::{kt2::Gen, sign::random_bytes};
 
 pub const ID_LEN: usize = 16;
 
 #[derive(Clone, Copy, PartialEq, Eq, Hash)]
-#[codable]
+#[derive(Archive, Serialize, Deserialize)]
+#[archive(check_bytes)]
 #[archive_attr(derive(PartialEq, Eq, Hash))]
 /// A primitive 16-byte ID.
 pub struct ID([u8; ID_LEN]);
@@ -72,17 +74,20 @@ macro_rules! impl_gen {
 
 // these exist to prevent accidentally using the wrong ID
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-#[codable]
+#[derive(Archive, Serialize, Deserialize)]
+#[archive(check_bytes)]
 #[archive_attr(derive(PartialEq, Eq, Hash))]
 pub struct UserID(ID);
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-#[codable]
+#[derive(Archive, Serialize, Deserialize)]
+#[archive(check_bytes)]
 #[archive_attr(derive(PartialEq, Eq, Hash))]
 pub struct AccountID(ID);
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-#[codable]
+#[derive(Archive, Serialize, Deserialize)]
+#[archive(check_bytes)]
 #[archive_attr(derive(PartialEq, Eq, Hash))]
 pub struct AppID(ID);
 

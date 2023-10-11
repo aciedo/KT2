@@ -1,4 +1,5 @@
 use blake3::hash;
+use rkyv::{Archive, Serialize, Deserialize};
 use std::fmt::Debug;
 use params::K;
 
@@ -26,7 +27,8 @@ pub const PUBLIC_KEY_BYTES: usize = crate::params::PUBLICKEYBYTES;
 pub const SIGN_BYTES: usize = crate::params::SIGNBYTES;
 pub const KEYPAIR_BYTES: usize = SECRET_KEY_BYTES + PUBLIC_KEY_BYTES;
 
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq, Eq, Archive, Serialize, Deserialize)]
+#[archive(check_bytes)]
 pub struct Signature (pub [u8; SIGN_BYTES]);
 
 impl Debug for Signature {
@@ -147,6 +149,8 @@ impl SecretKey {
     }
 }
 
+#[derive(PartialEq, Eq, Archive, Serialize, Deserialize)]
+#[archive(check_bytes)]
 pub struct PublicKey {
     pub bytes: [u8; PUBLIC_KEY_BYTES]
 }
