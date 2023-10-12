@@ -1,5 +1,5 @@
 use std::fmt::Debug;
-use blake3::{hash, Hasher};
+use blake3::Hasher;
 use ring::error::Unspecified;
 
 use crate::{Signature, SecretKey, id::{AccountID, AppID}, Keypair};
@@ -52,7 +52,7 @@ impl Debug for SecretKey {
         write!(
             f,
             "{}",
-            bs58::encode(hash(&self.bytes).as_bytes()).into_string()
+            bs58::encode(self.hash).into_string()
         )
     }
 }
@@ -61,7 +61,7 @@ impl UserKey {
     /// Creates a new account key for an account ID.
     pub fn get_account_key(&self, id: &AccountID) -> AccountKey {
         let hash = Hasher::new()
-            .update(&self.0.bytes)
+            .update(&self.0.hash)
             .update(id.as_bytes())
             .finalize();
         AccountKey(Keypair::generate(Some(hash.as_bytes())).secret)
@@ -75,7 +75,7 @@ pub struct AccountKey(pub SecretKey);
 impl AccountKey {
     pub fn get_app_key(&self, id: &AppID) -> AppKey {
         let hash = Hasher::new()
-            .update(&self.0.bytes)
+            .update(&self.0.hash)
             .update(id.as_bytes())
             .finalize();
         AppKey(Keypair::generate(Some(hash.as_bytes())).secret)
@@ -92,10 +92,10 @@ pub struct MultiUserAccountKey(pub SecretKey);
 
 impl MultiUserAccountKey {
     pub fn new(mut account_keys: Vec<AccountKey>) -> Self {
-        account_keys.sort_by(|a, b| a.0.bytes.cmp(&b.0.bytes));
+        account_keys.sort_by(|a, b| a.0.hash.cmp(&b.0.hash));
         let mut hasher = Hasher::new();
         for key in account_keys {
-            hasher.update(&key.0.bytes);
+            hasher.update(&key.0.hash);
         }
         Self(Keypair::generate(Some(hasher.finalize().as_bytes())).secret)
     }
@@ -104,7 +104,7 @@ impl MultiUserAccountKey {
 impl MultiUserAccountKey {
     pub fn get_app_key(&self, id: &AppID) -> AppKey {
         let hash = Hasher::new()
-            .update(&self.0.bytes)
+            .update(&self.0.hash)
             .update(id.as_bytes())
             .finalize();
         AppKey(Keypair::generate(Some(hash.as_bytes())).secret)
@@ -177,16 +177,16 @@ mod tests {
         let account_id = AccountID::gen();
         let account_key = user_key.get_account_key(&account_id);
         let account_key2 = user_key.get_account_key(&account_id);
-        assert_eq!(account_key.0.bytes, account_key2.0.bytes);
+        assert_eq!(account_key.0.hash, account_key2.0.hash);
         
         let app_id = AppID::gen();
         let app_key = account_key.get_app_key(&app_id);
         let app_key2 = account_key2.get_app_key(&app_id);
-        assert_eq!(app_key.0.bytes, app_key2.0.bytes);
+        assert_eq!(app_key.0.hash, app_key2.0.hash);
         
         let multi_user_account_key = MultiUserAccountKey::new(vec![account_key, account_key2]);
         let app_key3 = multi_user_account_key.get_app_key(&app_id);
         let app_key4 = multi_user_account_key.get_app_key(&app_id);
-        assert_eq!(app_key3.0.bytes, app_key4.0.bytes);
+        assert_eq!(app_key3.0.hash, app_key4.0.hash);
     }
 }

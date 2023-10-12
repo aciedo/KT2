@@ -1,5 +1,6 @@
 use blake3::hash;
 use rkyv::{Archive, Serialize, Deserialize};
+use secrecy::{Secret, ExposeSecret};
 use std::fmt::Debug;
 use params::K;
 
@@ -27,7 +28,7 @@ pub const PUBLIC_KEY_BYTES: usize = crate::params::PUBLICKEYBYTES;
 pub const SIGN_BYTES: usize = crate::params::SIGNBYTES;
 pub const KEYPAIR_BYTES: usize = SECRET_KEY_BYTES + PUBLIC_KEY_BYTES;
 
-#[derive(PartialEq, Eq, Archive, Serialize, Deserialize)]
+#[derive(PartialEq, Eq, Archive, Serialize, Deserialize, Clone)]
 #[archive(check_bytes)]
 pub struct Signature (pub [u8; SIGN_BYTES]);
 
@@ -64,11 +65,11 @@ impl Keypair {
     /// Convert a Keypair to a bytes array.
     /// 
     /// Returns an array containing private and public keys bytes
-    pub fn to_bytes(&self) -> [u8; KEYPAIR_BYTES] {
+    pub fn to_bytes(&self) -> Secret<[u8; KEYPAIR_BYTES]> {
         let mut result = [0u8; KEYPAIR_BYTES];
-        result[..SECRET_KEY_BYTES].copy_from_slice(&self.secret.to_bytes());
+        result[..SECRET_KEY_BYTES].copy_from_slice(self.secret.to_bytes().expose_secret());
         result[SECRET_KEY_BYTES..].copy_from_slice(&self.public.to_bytes());
-        result
+        result.into()
     }
 
     /// Create a Keypair from bytes.
@@ -111,14 +112,14 @@ impl Keypair {
 
 /// Private key.
 pub struct SecretKey {
-    pub bytes: [u8; SECRET_KEY_BYTES],
+    bytes: Secret<[u8; SECRET_KEY_BYTES]>,
     pub hash: [u8; 32]
 }
 
 impl SecretKey {
-    /// Returns a copy of underlying bytes.
-    pub fn to_bytes(&self) -> [u8; SECRET_KEY_BYTES] {
-       self.bytes.clone() 
+    /// Returns a copy of underlying bytes. Be very careful about how you use this!
+    pub fn to_bytes(&self) -> Secret<[u8; SECRET_KEY_BYTES]> {
+       self.bytes.expose_secret().clone().into() 
     }
 
     /// Create a SecretKey from bytes.
@@ -130,7 +131,7 @@ impl SecretKey {
     /// Returns a SecretKey
     pub fn from_bytes(bytes: &[u8]) -> SecretKey {
         SecretKey {
-            bytes: bytes.try_into().expect(""),
+            bytes: Secret::new(bytes.try_into().expect("")),
             hash: hash(bytes).into()
         }
     }
@@ -144,12 +145,12 @@ impl SecretKey {
     /// Returns a Signature
     pub fn sign(&self, msg: &[u8]) -> Signature {
         let mut sig = Signature([0u8; SIGN_BYTES]);
-        crate::sign::signature(&mut sig.0, msg, &self.bytes, false);
+        crate::sign::signature(&mut sig.0, msg, self.bytes.expose_secret(), false);
         sig
     }
 }
 
-#[derive(PartialEq, Eq, Archive, Serialize, Deserialize)]
+#[derive(PartialEq, Eq, Archive, Serialize, Deserialize, Clone)]
 #[archive(check_bytes)]
 pub struct PublicKey {
     pub bytes: [u8; PUBLIC_KEY_BYTES]
@@ -197,7 +198,6 @@ impl PublicKey {
     ///
     /// Returns a [PublicKey]
     pub fn from_sk(sk: &SecretKey) -> Self {
-        let sk = sk.bytes;
         let mut rho = [0u8; params::SEED_BYTES];
         let mut tr = [0u8; params::SEED_BYTES];
         let mut key = [0u8; params::SEED_BYTES];
@@ -205,7 +205,7 @@ impl PublicKey {
         let mut s1 = Polyvecl::default();
         let mut s2 = Polyveck::default();
     
-        unpack_sk(&mut rho, &mut tr, &mut key, &mut t0o, &mut s1, &mut s2, &sk);
+        unpack_sk(&mut rho, &mut tr, &mut key, &mut t0o, &mut s1, &mut s2, sk.bytes.expose_secret());
         
         let mut mat = [Polyvecl::default(); K];
         polyvec::matrix_expand(&mut mat, &rho);

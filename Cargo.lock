@@ -420,7 +420,7 @@ dependencies = [
 
 [[package]]
 name = "kt2"
-version = "1.1.0"
+version = "1.1.1"
 dependencies = [
  "blake3",
  "bs58",
@@ -429,6 +429,7 @@ dependencies = [
  "ring",
  "rkyv",
  "safe_pqc_kyber",
+ "secrecy",
 ]
 
 [[package]]
@@ -778,6 +779,15 @@ name = "seahash"
 version = "4.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1c107b6f4780854c8b126e228ea8869f4d7b71260f962fefb57b996b8959ba6b"
+
+[[package]]
+name = "secrecy"
+version = "0.8.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9bd1c54ea06cfd2f6b63219704de0b9b4f72dcc2b8fdef820be6cd799780e91e"
+dependencies = [
+ "zeroize",
+]
 
 [[package]]
 name = "serde"
